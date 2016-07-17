@@ -13,8 +13,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -32,31 +30,37 @@ public class DataLoadingTest {
 
 	private int counter;
 
-	private void loadFromStream(Stream<String> skus) {
-
-		skus.forEach(sku ->
-				STORE_IDS.forEach(storeId -> mapper.save(InventoryRecord.builder()
-						.sku(sku)
-						.storeId(storeId)
-						.value(99)
-						.threshold(88)
-						.build())));
-	}
-
 	@Test
 	public void loadData() throws IOException {
 
-		loadFromStream(Files.lines(Paths.get(pathToCsv))
-				.flatMap(line -> Stream.of(line.split("\\W+"))));
+		Files.lines(Paths.get(pathToCsv))
+				.flatMap(line -> Stream.of(line.split("\\W+"))).
+				forEach(sku ->
+						STORE_IDS.forEach(storeId -> mapper.save(InventoryRecord.builder()
+								.sku(sku)
+								.storeId(storeId)
+								.value(99)
+								.threshold(88)
+								.build())));
 	}
 
 	@Test
-	public void load3000Records() {
+	public void load1MRecords() {
 
-		List<String> skus = new LinkedList<>();
-		for (int i = 0; i < 10000; i++) {
-			skus.add("" + (4000000 + i));
+		for (int i = 1_000_000; i < 3_000_000; i++) {
+
+			if (i % 10_000 == 0) {
+				System.out.println("Storing sku: " + i);
+			}
+
+			for (String storeId: STORE_IDS) {
+				mapper.save(InventoryRecord.builder()
+						.sku("" + i)
+						.storeId(storeId)
+						.value(99)
+						.threshold(77)
+						.build());
+			}
 		}
-		loadFromStream(skus.stream());
 	}
 }
