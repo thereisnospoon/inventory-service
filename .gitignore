@@ -16,3 +16,5 @@ gradlew*
 gradle/
 .idea/
 .gradle/
+
+src/main/java/my/thereisnospoon/odc/dto/*.java

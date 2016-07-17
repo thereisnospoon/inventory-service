@@ -1,0 +1,5 @@
+data:
+  pathToCsv: /media/dima/E/Sources/odc/src/test/resources/sampleData.csv
+
+cassandra:
+  contactPoint: 172.17.0.1
